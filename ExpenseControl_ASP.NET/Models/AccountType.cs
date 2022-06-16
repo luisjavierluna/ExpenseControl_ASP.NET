@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ExpenseControl_ASP.NET.Validations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ExpenseControl_ASP.NET.Models
 {
@@ -6,6 +7,7 @@ namespace ExpenseControl_ASP.NET.Models
     {
         public int Id { get; set; }
         [Required]
+        [FirstUppercaseLetter]
         public string Name { get; set; }
         public int UserId { get; set; }
         public int Order { get; set; }
