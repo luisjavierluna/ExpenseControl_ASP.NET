@@ -1,7 +1,10 @@
+using ExpenseControl_ASP.NET.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<IAccountsTypesRepository, AccountsTypesRepository>();
 
 var app = builder.Build();
 

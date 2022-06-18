@@ -10,6 +10,6 @@ namespace ExpenseControl_ASP.NET.Models
         [FirstUppercaseLetter]
         public string Name { get; set; }
         public int UserId { get; set; }
-        public int Order { get; set; }
+        public int Sequence { get; set; }
     }
 }
