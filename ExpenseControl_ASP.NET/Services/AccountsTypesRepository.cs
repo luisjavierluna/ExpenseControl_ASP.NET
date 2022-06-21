@@ -7,6 +7,7 @@ namespace ExpenseControl_ASP.NET.Services
     public interface IAccountsTypesRepository
     {
         Task Create(AccountType accountType);
+        Task<bool> Exists(string name, int usuarioId);
     }
 
     public class AccountsTypesRepository : IAccountsTypesRepository
@@ -27,6 +28,17 @@ namespace ExpenseControl_ASP.NET.Services
                 SELECT SCOPE_IDENTITY();",
                 accountType);
             accountType.Id = id;
+        }
+
+        public async Task<bool> Exists(string name, int userId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            var exists = await connection.QueryFirstOrDefaultAsync<int>(@"
+                SELECT 1
+                FROM AccountsTypes
+                WHERE Name = @Name AND UserId = @UserId",
+                new {name, userId });
+            return exists == 1;
         }
     }
 }

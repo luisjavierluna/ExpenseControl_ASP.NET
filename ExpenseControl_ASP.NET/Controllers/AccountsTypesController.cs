@@ -29,6 +29,18 @@ namespace ExpenseControl_ASP.NET.Controllers
             }
 
             accountType.UserId = 1;
+
+            var accountTypeAlreadyExists = await accountsTypesRepository
+                .Exists(accountType.Name, accountType.UserId);
+
+            if (accountTypeAlreadyExists)
+            {
+                ModelState.AddModelError(nameof(accountType.Name),
+                    $"Account type {accountType.Name} already exists");
+
+                return View(accountType);
+            }
+
             await accountsTypesRepository.Create(accountType);
 
             return View();
