@@ -45,5 +45,19 @@ namespace ExpenseControl_ASP.NET.Controllers
 
             return View();
         }
+
+        public async Task<IActionResult> CheckAccountTypeAlreadyExists(string name)
+        {
+            var userId = 1;
+            var accountTypeAlreadyExists = await accountsTypesRepository
+                .Exists(name, userId);
+
+            if (accountTypeAlreadyExists)
+            {
+                return Json($"Account type {name} already exists");
+            }
+
+            return Json(true);
+        }
     }
 }
