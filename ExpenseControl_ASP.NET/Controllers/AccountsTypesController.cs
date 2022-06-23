@@ -15,6 +15,13 @@ namespace ExpenseControl_ASP.NET.Controllers
             this.accountsTypesRepository = accountsTypesRepository;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            var userId = 1;
+            var accountsTypes = await accountsTypesRepository.GetAccountsTypes(userId);
+            return View(accountsTypes);
+        }
+
         public IActionResult Create()
         {
             return View();
@@ -43,7 +50,7 @@ namespace ExpenseControl_ASP.NET.Controllers
 
             await accountsTypesRepository.Create(accountType);
 
-            return View();
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> CheckAccountTypeAlreadyExists(string name)
