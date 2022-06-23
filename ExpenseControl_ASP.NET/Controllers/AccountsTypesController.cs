@@ -9,15 +9,19 @@ namespace ExpenseControl_ASP.NET.Controllers
     public class AccountsTypesController : Controller
     {
         private readonly IAccountsTypesRepository accountsTypesRepository;
+        private readonly IUsersService usersService;
 
-        public AccountsTypesController(IAccountsTypesRepository accountsTypesRepository)
+        public AccountsTypesController(
+            IAccountsTypesRepository accountsTypesRepository,
+            IUsersService usersService)
         {
             this.accountsTypesRepository = accountsTypesRepository;
+            this.usersService = usersService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var userId = 1;
+            var userId = usersService.GetUserId();
             var accountsTypes = await accountsTypesRepository.GetAccountsTypes(userId);
             return View(accountsTypes);
         }
@@ -35,7 +39,7 @@ namespace ExpenseControl_ASP.NET.Controllers
                 return View(accountType);
             }
 
-            accountType.UserId = 1;
+            accountType.UserId = usersService.GetUserId();
 
             var accountTypeAlreadyExists = await accountsTypesRepository
                 .Exists(accountType.Name, accountType.UserId);
@@ -55,7 +59,7 @@ namespace ExpenseControl_ASP.NET.Controllers
 
         public async Task<IActionResult> CheckAccountTypeAlreadyExists(string name)
         {
-            var userId = 1;
+            var userId = usersService.GetUserId();
             var accountTypeAlreadyExists = await accountsTypesRepository
                 .Exists(name, userId);
 
