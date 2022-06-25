@@ -57,6 +57,37 @@ namespace ExpenseControl_ASP.NET.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userId = usersService.GetUserId();
+            var accountType = await accountsTypesRepository.GetById(id, userId);
+
+            if (accountType is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            return View(accountType);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(AccountType accountType)
+        {
+            var userId = usersService.GetUserId();
+            var accountTypeExists = await accountsTypesRepository
+                .GetById(accountType.Id, userId);
+
+            if (accountTypeExists is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            await accountsTypesRepository.Update(accountType);
+            return RedirectToAction("Index");
+        }
+
+
         public async Task<IActionResult> CheckAccountTypeAlreadyExists(string name)
         {
             var userId = usersService.GetUserId();

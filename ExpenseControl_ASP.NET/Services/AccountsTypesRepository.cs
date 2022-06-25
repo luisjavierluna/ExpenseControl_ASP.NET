@@ -9,6 +9,8 @@ namespace ExpenseControl_ASP.NET.Services
         Task Create(AccountType accountType);
         Task<bool> Exists(string name, int usuarioId);
         Task<IEnumerable<AccountType>> GetAccountsTypes(int userId);
+        Task<AccountType> GetById(int id, int userId);
+        Task Update(AccountType accountType);
     }
 
     public class AccountsTypesRepository : IAccountsTypesRepository
@@ -51,5 +53,27 @@ namespace ExpenseControl_ASP.NET.Services
                 WHERE UserId = @UserId",
                 new { userId });
         }
+
+        public async Task<AccountType> GetById(int id, int userId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryFirstOrDefaultAsync<AccountType>(@"
+                SELECT Id, Name, Sequence
+                FROM AccountsTypes
+                WHERE Id = @Id AND UserId = @UserId",
+                new { id, userId});
+        }
+
+        public async Task Update(AccountType accountType)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(@"
+                UPDATE AccountsTypes
+                SET Name = @Name
+                WHERE Id = @Id",
+                accountType);
+        }
+
+
     }
 }
