@@ -7,6 +7,7 @@ namespace ExpenseControl_ASP.NET.Services
     public interface IAccountsTypesRepository
     {
         Task Create(AccountType accountType);
+        Task Delete(int id);
         Task<bool> Exists(string name, int usuarioId);
         Task<IEnumerable<AccountType>> GetAccountsTypes(int userId);
         Task<AccountType> GetById(int id, int userId);
@@ -74,6 +75,13 @@ namespace ExpenseControl_ASP.NET.Services
                 accountType);
         }
 
-
+        public async Task Delete(int id)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(@"
+                DELETE AccountsTypes
+                WHERE Id = @Id",
+                new { id });
+        }
     }
 }

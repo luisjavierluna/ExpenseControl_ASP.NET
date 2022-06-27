@@ -58,6 +58,37 @@ namespace ExpenseControl_ASP.NET.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = usersService.GetUserId();
+            var accountType = await accountsTypesRepository.GetById(id, userId);
+
+            if (accountType is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            return View(accountType);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAccountType(int id)
+        {
+            var userId = usersService.GetUserId();
+            var accountType = await accountsTypesRepository
+                .GetById(id, userId);
+
+            if (accountType is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            await accountsTypesRepository.Delete(id);
+            return RedirectToAction("Index");
+        }
+
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var userId = usersService.GetUserId();
@@ -86,7 +117,6 @@ namespace ExpenseControl_ASP.NET.Controllers
             await accountsTypesRepository.Update(accountType);
             return RedirectToAction("Index");
         }
-
 
         public async Task<IActionResult> CheckAccountTypeAlreadyExists(string name)
         {
