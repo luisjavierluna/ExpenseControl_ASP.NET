@@ -19,7 +19,7 @@
             <th>Name</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="resortable">
         @foreach (var accountType in @Model)
         {
             <tr>
@@ -34,3 +34,11 @@
         }
     </tbody>
 </table>
+
+@section Scripts{
+    <script>
+        $(function(){
+            $("#resortable").sortable();
+        })
+    </script>
+}
