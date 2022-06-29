@@ -131,5 +131,12 @@ namespace ExpenseControl_ASP.NET.Controllers
 
             return Json(true);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Sort([FromBody] int[] ids)
+        {
+            return Ok();
+        }
+
     }
 }

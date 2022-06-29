@@ -6,7 +6,8 @@
 
 <h1>Account Types</h1>
 
-<h5>The account type refers to how we can group accounts.
+<h5>
+    The account type refers to how we can group accounts.
     Examples: loans, cretdit cards, etc.
 </h5>
 
@@ -24,6 +25,7 @@
         {
             <tr>
                 <td>
+                    <input type="hidden" value="@accountType.Id" class="ids" />
                     <a class="btn btn-primary" asp-action="Edit" asp-route-id="@accountType.Id">Edit</a>
                     <a class="btn btn-danger" asp-action="Delete" asp-route-id="@accountType.Id">Delete</a>
                 </td>
@@ -37,8 +39,41 @@
 
 @section Scripts{
     <script>
-        $(function(){
-            $("#resortable").sortable();
+
+        const urlSort = '@Url.Action("sort")';
+
+        $(function() {
+            $("#resortable").sortable({
+                stop: async function(e, ui) {
+                    await updateSequences();
+                }
+            });
+
+            async function updateSequences() {
+                const ids = getIdsFromElements();
+                await sendIdsToBackend(ids);
+            }
+
+            function getIdsFromElements() {
+                const ids = $(".ids").map(function() {
+                    return $(this).val();
+                }).get();
+
+                return ids;
+            }
+
+            async function sendIdsToBackend(ids) {
+                var data = JSON.stringify(ids);
+
+                await fetch(urlSort, {
+                    method: 'POST',
+                    body: data,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+            }
         })
     </script>
+
 }
