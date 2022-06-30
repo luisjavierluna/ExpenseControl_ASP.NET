@@ -11,6 +11,7 @@ namespace ExpenseControl_ASP.NET.Services
         Task<bool> Exists(string name, int usuarioId);
         Task<IEnumerable<AccountType>> GetAccountsTypes(int userId);
         Task<AccountType> GetById(int id, int userId);
+        Task Sort(IEnumerable<AccountType> sortedAccountTypes);
         Task Update(AccountType accountType);
     }
 
@@ -51,7 +52,8 @@ namespace ExpenseControl_ASP.NET.Services
             return await connection.QueryAsync<AccountType>(@"
                 SELECT Id, Name, Sequence
                 FROM AccountsTypes
-                WHERE UserId = @UserId",
+                WHERE UserId = @UserId
+                ORDER BY Sequence",
                 new { userId });
         }
 
@@ -82,6 +84,13 @@ namespace ExpenseControl_ASP.NET.Services
                 DELETE AccountsTypes
                 WHERE Id = @Id",
                 new { id });
+        }
+
+        public async Task Sort(IEnumerable<AccountType> sortedAccountTypes)
+        {
+            var query = "UPDATE AccountsTypes SET Sequence = @Sequence WHERE Id = @Id";
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(query, sortedAccountTypes);
         }
     }
 }

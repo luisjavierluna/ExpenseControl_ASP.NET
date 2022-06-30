@@ -135,6 +135,23 @@ namespace ExpenseControl_ASP.NET.Controllers
         [HttpPost]
         public async Task<IActionResult> Sort([FromBody] int[] ids)
         {
+            var userId = usersService.GetUserId();
+            var accountsTypes = await accountsTypesRepository
+                .GetAccountsTypes(userId);
+            var accountsTypesIds = accountsTypes.Select(x => x.Id);
+
+            var accountsTypesIdsNotBelongUser = ids.Except(accountsTypesIds).ToList();
+
+            if (accountsTypesIdsNotBelongUser.Count > 0)
+            {
+                return Forbid();
+            }
+
+            var sortedAccountTypes = ids.Select((value, index) =>
+                new AccountType() { Id = value, Sequence = index + 1 }).AsEnumerable();
+
+            await accountsTypesRepository.Sort(sortedAccountTypes);
+
             return Ok();
         }
 
