@@ -27,11 +27,14 @@ namespace ExpenseControl_ASP.NET.Services
         public async Task Create(AccountType accountType)
         {
             using var connection = new SqlConnection(connectionString);
-            var id = await connection.QuerySingleAsync<int>(@"
-                INSERT INTO AccountsTypes (Name, UserId, Sequence)
-                VALUES (@Name, @UserId, 0)
-                SELECT SCOPE_IDENTITY();",
-                accountType);
+            var id = await connection.QuerySingleAsync<int>(
+                "AccountsTypes_Insert",
+                new
+                {
+                    name = accountType.Name,
+                    userId = accountType.UserId
+                },
+                commandType: System.Data.CommandType.StoredProcedure);
             accountType.Id = id;
         }
 
