@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<IAccountsTypesRepository, AccountsTypesRepository>();
 builder.Services.AddTransient<IUsersService, UsersService>();
+builder.Services.AddTransient<IAccountsRepository, AccountsRepository>();
 
 var app = builder.Build();
 
