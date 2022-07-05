@@ -1,3 +1,38 @@
-﻿#resortable tr {
+﻿#reordenable tr {
     cursor: move;
+}
+
+.container-totals {
+    display: flex;
+    justify-content: space-around;
+    font-size: 26px;
+    text-align: center
+}
+
+.positiveBalance {
+    color: blue;
+}
+
+.negativeBalance {
+    color: red;
+}
+
+.accordion-accounts button {
+    color: black !important;
+    font-size: 20px;
+}
+
+.accordion-accounts button > span {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.accordion-accounts ul li {
+    display: flex;
+    justify-content: space-between;
+}
+
+.accordion-accounts .accordion-collapse {
+    font-size: 18px;
 }
