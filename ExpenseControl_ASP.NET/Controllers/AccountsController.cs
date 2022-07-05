@@ -21,6 +21,23 @@ namespace ExpenseControl_ASP.NET.Controllers
             this.accountsRepository = accountsRepository;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            var userId = usersService.GetUserId();
+            var accountsWithAccountType = await accountsRepository.Search(userId);
+
+            var model = accountsWithAccountType
+                .GroupBy(x => x.AccountType)
+                .Select(group => new AccountsIndexViewModel
+                {
+                    AccountType = group.Key,
+                    Accounts = group.AsEnumerable()
+                }).ToList();
+
+            return View(model);
+        }
+
+
         [HttpGet]
         public async Task<IActionResult> Create()
         {

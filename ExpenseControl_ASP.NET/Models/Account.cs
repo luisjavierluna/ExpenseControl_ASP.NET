@@ -15,6 +15,7 @@ namespace ExpenseControl_ASP.NET.Models
         public decimal Balance { get; set; }
         [StringLength(maximumLength: 1000)]
         public string Description { get; set; }
+        public string AccountType { get; set; }
 
     }
 }
