@@ -68,6 +68,51 @@ namespace ExpenseControl_ASP.NET.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userId = usersService.GetUserId();
+            var account = await accountsRepository.GetById(id, userId);
+
+            if(account is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            var model = new CreateAccountViewModel()
+            {
+                Id = account.Id,
+                Name = account.Name,
+                AccountTypeId = account.AccountTypeId,
+                Description = account.Description,
+                Balance = account.Balance
+            };
+
+            model.AccountsTypes = await GetAccountsTypes(userId);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(CreateAccountViewModel accountToEdit)
+        {
+            var userId = usersService.GetUserId();
+            var account = await accountsRepository.GetById(accountToEdit.Id, userId);
+
+            if (account is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            var accountType = accountsTypesRepository.GetById(accountToEdit.AccountTypeId, userId);
+
+            if (accountType is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            await accountsRepository.Update(accountToEdit);
+            return RedirectToAction("Index");
+        }
+
         private async Task<IEnumerable<SelectListItem>> GetAccountsTypes(int userId)
         {
             var accountsTypes = await accountsTypesRepository.GetAccountsTypes(userId);

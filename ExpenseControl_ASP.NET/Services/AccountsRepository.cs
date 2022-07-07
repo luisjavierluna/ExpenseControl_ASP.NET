@@ -7,7 +7,9 @@ namespace ExpenseControl_ASP.NET.Services
     public interface IAccountsRepository
     {
         Task Create(Account account);
+        Task<Account> GetById(int id, int userId);
         Task<IEnumerable<Account>> Search(int userId);
+        Task Update(CreateAccountViewModel account);
     }
 
     public class AccountsRepository: IAccountsRepository
@@ -41,6 +43,28 @@ namespace ExpenseControl_ASP.NET.Services
                 WHERE acty.UserId = @UserId
                 ORDER BY acty.Sequence",
                 new { userId });
+        }
+
+        public async Task<Account> GetById(int id, int userId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryFirstOrDefaultAsync<Account>(@"
+                SELECT Accounts.Id, Accounts.Name, Balance, Description, AccountTypeId
+                FROM Accounts
+                INNER JOIN AccountsTypes acty
+                ON acty.Id = Accounts.AccountTypeId
+                WHERE acty.UserId = @UserId AND Accounts.Id = @Id",
+                new { id, userId });
+        }
+
+        public async Task Update(CreateAccountViewModel account)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(@"
+                UPDATE Accounts
+                SET Name = @Name, Balance = @Balance, Description = @Description, AccountTypeId = @AccountTypeId
+                WHERE Id = @Id;",
+                account);
         }
     }
 }
