@@ -16,23 +16,3 @@
 .negativeBalance {
     color: red;
 }
-
-.accordion-accounts button {
-    color: black !important;
-    font-size: 20px;
-}
-
-.accordion-accounts button > span {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.accordion-accounts ul li {
-    display: flex;
-    justify-content: space-between;
-}
-
-.accordion-accounts .accordion-collapse {
-    font-size: 18px;
-}
