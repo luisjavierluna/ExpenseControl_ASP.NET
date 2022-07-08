@@ -1,4 +1,5 @@
-﻿using ExpenseControl_ASP.NET.Models;
+﻿using AutoMapper;
+using ExpenseControl_ASP.NET.Models;
 using ExpenseControl_ASP.NET.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,15 +11,18 @@ namespace ExpenseControl_ASP.NET.Controllers
         private readonly IUsersService usersService;
         private readonly IAccountsTypesRepository accountsTypesRepository;
         private readonly IAccountsRepository accountsRepository;
+        private readonly IMapper mapper;
 
         public AccountsController(
             IUsersService usersService,
             IAccountsTypesRepository accountsTypesRepository,
-            IAccountsRepository accountsRepository)
+            IAccountsRepository accountsRepository,
+            IMapper mapper)
         {
             this.usersService = usersService;
             this.accountsTypesRepository = accountsTypesRepository;
             this.accountsRepository = accountsRepository;
+            this.mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
@@ -78,14 +82,7 @@ namespace ExpenseControl_ASP.NET.Controllers
                 return RedirectToAction("ElementNotFound", "Home");
             }
 
-            var model = new CreateAccountViewModel()
-            {
-                Id = account.Id,
-                Name = account.Name,
-                AccountTypeId = account.AccountTypeId,
-                Description = account.Description,
-                Balance = account.Balance
-            };
+            var model = mapper.Map<CreateAccountViewModel>(account);
 
             model.AccountsTypes = await GetAccountsTypes(userId);
             return View(model);
