@@ -7,6 +7,7 @@ namespace ExpenseControl_ASP.NET.Services
     public interface IAccountsRepository
     {
         Task Create(Account account);
+        Task Delete(int id);
         Task<Account> GetById(int id, int userId);
         Task<IEnumerable<Account>> Search(int userId);
         Task Update(CreateAccountViewModel account);
@@ -66,5 +67,14 @@ namespace ExpenseControl_ASP.NET.Services
                 WHERE Id = @Id;",
                 account);
         }
+
+        public async Task Delete(int id)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(
+                "DELETE Accounts WHERE Id = @Id",
+                new { id });
+        }
+
     }
 }
