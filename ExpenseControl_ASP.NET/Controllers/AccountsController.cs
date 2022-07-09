@@ -110,6 +110,34 @@ namespace ExpenseControl_ASP.NET.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = usersService.GetUserId();
+            var account = await accountsRepository.GetById(id, userId);
+
+            if (account is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            return View(account);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAccount(int id)
+        {
+            var userId = usersService.GetUserId();
+            var account = await accountsRepository.GetById(id, userId);
+
+            if (account is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            await accountsRepository.Delete(id);
+            return RedirectToAction("Index");
+        }
+
         private async Task<IEnumerable<SelectListItem>> GetAccountsTypes(int userId)
         {
             var accountsTypes = await accountsTypesRepository.GetAccountsTypes(userId);
