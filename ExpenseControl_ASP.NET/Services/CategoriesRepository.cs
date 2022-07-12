@@ -7,6 +7,7 @@ namespace ExpenseControl_ASP.NET.Services
     public interface ICategoriesRepository
     {
         Task Create(Category category);
+        Task<IEnumerable<Category>> GetCategories(int userId);
     }
 
     public class CategoriesRepository: ICategoriesRepository
@@ -27,6 +28,14 @@ namespace ExpenseControl_ASP.NET.Services
                 SELECT SCOPE_IDENTITY();",
                 category);
             category.Id = id;
+        }
+
+        public async Task<IEnumerable<Category>> GetCategories(int userId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Category>(
+                "SELECT * FROM Categories WHERE UserId = @UserId",
+                new { userId });
         }
 
     }
