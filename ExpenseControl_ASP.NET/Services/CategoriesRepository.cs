@@ -55,7 +55,7 @@ namespace ExpenseControl_ASP.NET.Services
             using var connection = new SqlConnection(connectionString);
             await connection.ExecuteAsync(@"
                 UPDATE Categories
-                SET Name = @Name, OperationTypeId = @OperationsTypes
+                SET Name = @Name, OperationTypeId = @OperationTypeId
                 WHERE Id = @Id",
                 category);
         }
