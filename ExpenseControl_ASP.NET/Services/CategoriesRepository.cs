@@ -7,7 +7,9 @@ namespace ExpenseControl_ASP.NET.Services
     public interface ICategoriesRepository
     {
         Task Create(Category category);
+        Task<Category> GetById(int id, int userId);
         Task<IEnumerable<Category>> GetCategories(int userId);
+        Task Update(Category category);
     }
 
     public class CategoriesRepository: ICategoriesRepository
@@ -37,6 +39,27 @@ namespace ExpenseControl_ASP.NET.Services
                 "SELECT * FROM Categories WHERE UserId = @UserId",
                 new { userId });
         }
+
+        public async Task<Category> GetById(int id, int userId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryFirstOrDefaultAsync<Category>(@"
+                SELECT *
+                FROM Categories
+                WHERE Id = @Id AND UserId = @UserId",
+                new { id, userId });
+        }
+
+        public async Task Update(Category category)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(@"
+                UPDATE Categories
+                SET Name = @Name, OperationTypeId = @OperationsTypes
+                WHERE Id = @Id",
+                category);
+        }
+
 
     }
 }
