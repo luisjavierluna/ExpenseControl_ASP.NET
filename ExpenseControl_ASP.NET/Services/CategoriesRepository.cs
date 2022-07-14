@@ -7,6 +7,7 @@ namespace ExpenseControl_ASP.NET.Services
     public interface ICategoriesRepository
     {
         Task Create(Category category);
+        Task Delete(int id);
         Task<Category> GetById(int id, int userId);
         Task<IEnumerable<Category>> GetCategories(int userId);
         Task Update(Category category);
@@ -60,6 +61,10 @@ namespace ExpenseControl_ASP.NET.Services
                 category);
         }
 
-
+        public async Task Delete(int id)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(@"DELETE Categories WHERE Id = @Id", new { id });
+        }
     }
 }

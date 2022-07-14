@@ -79,5 +79,32 @@ namespace ExpenseControl_ASP.NET.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = usersService.GetUserId();
+            var category = await categoriesRepository.GetById(id, userId);
+
+            if (category is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            return View(category);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var userId = usersService.GetUserId();
+            var categoria = await categoriesRepository.GetById(id, userId);
+
+            if (categoria is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            await categoriesRepository.Delete(id);
+            return RedirectToAction("Index");
+        }
     }
 }
