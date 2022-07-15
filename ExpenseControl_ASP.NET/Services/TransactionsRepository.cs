@@ -6,7 +6,7 @@ namespace ExpenseControl_ASP.NET.Services
 {
     public interface ITransactionsRepository
     {
-
+        Task Crear(Transaction transaction);
     }
 
     public class TransactionsRepository: ITransactionsRepository
