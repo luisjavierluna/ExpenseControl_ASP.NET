@@ -6,6 +6,7 @@ namespace ExpenseControl_ASP.NET.Models
     {
         public int Id { get; set; }
         public int UserId { get; set; }
+        [Display(Name = "Transaction Date")]
         public DateTime TransactionDate { get; set; } = DateTime.Today;
         public decimal Amount { get; set; }
         [Range(1, maximum: int.MaxValue, ErrorMessage = "Category is a required field")]
