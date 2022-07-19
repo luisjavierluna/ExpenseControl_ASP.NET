@@ -5,7 +5,6 @@
 }
 
 <h1>Create Transaction</h1>
-<h5>Una transacción te permite indicar tus ingresos y gastos</h5>
 <h5>The Transaction allows you to indicate your income and expenses</h5>
 
 <form asp-action="Create">
@@ -15,6 +14,35 @@
         <input asp-for="TransactionDate" class="form-control"/>
         <span asp-validation-for="TransactionDate" class="text-danger"></span>
     </div>
+        <div class="mb-3">
+        <label asp-for="AccountId" class="form-label"></label>
+        <select asp-for="AccountId" asp-items="Model.Accounts" class="form-select"></select>
+        <span asp-validation-for="AccountId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="OperationTypeId" class="form-label"></label>
+        <select asp-for="OperationTypeId" asp-items="Html.GetEnumSelectList<OperationType>()" 
+            class="form-select"></select>
+        <span asp-validation-for="OperationTypeId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label"></label>
+        <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select"></select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Amount" class="form-label"></label>
+        <input asp-for="Amount" class="form-control"/>
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="Note" class="form-label"></label>
+        <textarea asp-for="Note" class="form-control"></textarea>
+        <span asp-validation-for="Note" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-primary">Enviar</button>
+    <a class="btn btn-secondary" asp-action="Index">Cancelar</a>
 </form>
 
 @section Scripts{
