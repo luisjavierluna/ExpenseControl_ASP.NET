@@ -26,6 +26,7 @@ namespace ExpenseControl_ASP.NET.Controllers
             var userId = usersService.GetUserId();
             var model = new CreateTransactionViewModel();
             model.Accounts = await GetAccounts(userId);
+            model.Categories = await GetCategories(userId, model.OperationTypeId);
             return View(model);
         }
 
