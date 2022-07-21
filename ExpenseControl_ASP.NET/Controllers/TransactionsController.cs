@@ -9,13 +9,16 @@ namespace ExpenseControl_ASP.NET.Controllers
     {
         private readonly IUsersService usersService;
         private readonly IAccountsRepository accountsRepository;
+        private readonly ICategoriesRepository categoriesRepository;
 
         public TransactionsController(
             IUsersService usersService,
-            IAccountsRepository accountsRepository)
+            IAccountsRepository accountsRepository,
+            ICategoriesRepository categoriesRepository)
         {
             this.usersService = usersService;
             this.accountsRepository = accountsRepository;
+            this.categoriesRepository = categoriesRepository;
         }
 
         public async Task<IActionResult> Create()
@@ -31,6 +34,23 @@ namespace ExpenseControl_ASP.NET.Controllers
             var cuentas = await accountsRepository.Search(UserId);
             return cuentas.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
         }
+
+        private async Task<IEnumerable<SelectListItem>> GetCategories(
+            int userId,
+            OperationType operationType)
+        {
+            var categories = await categoriesRepository.GetCategories(userId, operationType);
+            return categories.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetCategories([FromBody] OperationType operationType)
+        {
+            var userId = usersService.GetUserId();
+            var categories = await GetCategories(userId, operationType);
+            return Ok(categories);
+        }
+
 
     }
 }
