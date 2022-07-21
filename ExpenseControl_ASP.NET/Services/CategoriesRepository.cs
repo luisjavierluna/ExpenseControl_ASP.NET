@@ -10,10 +10,11 @@ namespace ExpenseControl_ASP.NET.Services
         Task Delete(int id);
         Task<Category> GetById(int id, int userId);
         Task<IEnumerable<Category>> GetCategories(int userId);
+        Task<IEnumerable<Category>> GetCategories(int userId, OperationType operationTypeId);
         Task Update(Category category);
     }
 
-    public class CategoriesRepository: ICategoriesRepository
+    public class CategoriesRepository : ICategoriesRepository
     {
         private readonly string connectionString;
 
@@ -40,6 +41,17 @@ namespace ExpenseControl_ASP.NET.Services
                 "SELECT * FROM Categories WHERE UserId = @UserId",
                 new { userId });
         }
+
+        public async Task<IEnumerable<Category>> GetCategories(int userId, OperationType operationTypeId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Category>(
+                @"SELECT *
+                FROM Categories
+                WHERE UserId = @UserId AND OperationTypeId = @OperationTypeId",
+                new { userId, operationTypeId });
+        }
+
 
         public async Task<Category> GetById(int id, int userId)
         {
