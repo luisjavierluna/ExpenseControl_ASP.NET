@@ -6,7 +6,7 @@ namespace ExpenseControl_ASP.NET.Services
 {
     public interface ITransactionsRepository
     {
-        Task Crear(Transaction transaction);
+        Task Create(Transaction transaction);
     }
 
     public class TransactionsRepository: ITransactionsRepository
@@ -18,7 +18,7 @@ namespace ExpenseControl_ASP.NET.Services
             connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public async Task Crear(Transaction transaction)
+        public async Task Create(Transaction transaction)
         {
             using var connection = new SqlConnection(connectionString);
             var id = await connection.QuerySingleAsync<int>(

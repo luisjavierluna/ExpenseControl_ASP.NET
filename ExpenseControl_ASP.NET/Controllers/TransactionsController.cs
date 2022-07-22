@@ -10,15 +10,23 @@ namespace ExpenseControl_ASP.NET.Controllers
         private readonly IUsersService usersService;
         private readonly IAccountsRepository accountsRepository;
         private readonly ICategoriesRepository categoriesRepository;
+        private readonly ITransactionsRepository transactionsRepository;
 
         public TransactionsController(
             IUsersService usersService,
             IAccountsRepository accountsRepository,
-            ICategoriesRepository categoriesRepository)
+            ICategoriesRepository categoriesRepository,
+            ITransactionsRepository transactionsRepository)
         {
             this.usersService = usersService;
             this.accountsRepository = accountsRepository;
             this.categoriesRepository = categoriesRepository;
+            this.transactionsRepository = transactionsRepository;
+        }
+
+        public IActionResult Index()
+        {
+            return View();
         }
 
         public async Task<IActionResult> Create()
@@ -29,6 +37,44 @@ namespace ExpenseControl_ASP.NET.Controllers
             model.Categories = await GetCategories(userId, model.OperationTypeId);
             return View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateTransactionViewModel model)
+        {
+            var userId = usersService.GetUserId();
+
+            if (!ModelState.IsValid)
+            {
+                model.Accounts = await GetAccounts(userId);
+                model.Categories = await GetCategories(userId, model.OperationTypeId);
+                return View(model);
+            }
+
+            var account = await accountsRepository.GetById(model.AccountId, userId);
+
+            if (account is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            var category = await categoriesRepository.GetById(model.CategoryId, userId);
+
+            if (category is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            model.UserId = userId;
+
+            if (model.OperationTypeId == OperationType.Expense)
+            {
+                model.Amount *= -1;
+            }
+
+            await transactionsRepository.Create(model);
+            return RedirectToAction("Index");
+        }
+
 
         private async Task<IEnumerable<SelectListItem>> GetAccounts(int UserId)
         {
