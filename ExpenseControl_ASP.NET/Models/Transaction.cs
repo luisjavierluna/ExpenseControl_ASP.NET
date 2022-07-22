@@ -18,6 +18,7 @@ namespace ExpenseControl_ASP.NET.Models
         [Display(Name = "Account")]
         [Range(1, maximum: int.MaxValue, ErrorMessage = "Account is a required field")]
         public int AccountId { get; set; }
-
+        [Display(Name = "Operation Type")]
+        public OperationType OperationTypeId { get; set; } = OperationType.Income;
     }
 }
