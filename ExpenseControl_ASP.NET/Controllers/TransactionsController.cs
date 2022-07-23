@@ -1,4 +1,5 @@
-﻿using ExpenseControl_ASP.NET.Models;
+﻿using AutoMapper;
+using ExpenseControl_ASP.NET.Models;
 using ExpenseControl_ASP.NET.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,17 +12,20 @@ namespace ExpenseControl_ASP.NET.Controllers
         private readonly IAccountsRepository accountsRepository;
         private readonly ICategoriesRepository categoriesRepository;
         private readonly ITransactionsRepository transactionsRepository;
+        private readonly IMapper mapper;
 
         public TransactionsController(
             IUsersService usersService,
             IAccountsRepository accountsRepository,
             ICategoriesRepository categoriesRepository,
-            ITransactionsRepository transactionsRepository)
+            ITransactionsRepository transactionsRepository,
+            IMapper mapper)
         {
             this.usersService = usersService;
             this.accountsRepository = accountsRepository;
             this.categoriesRepository = categoriesRepository;
             this.transactionsRepository = transactionsRepository;
+            this.mapper = mapper;
         }
 
         public IActionResult Index()
@@ -74,6 +78,82 @@ namespace ExpenseControl_ASP.NET.Controllers
             await transactionsRepository.Create(model);
             return RedirectToAction("Index");
         }
+
+
+
+
+
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var userId = usersService.GetUserId();
+            var transaction = await transactionsRepository.GetById(id, userId);
+
+            if (transaction is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            var model = mapper.Map<UpdateTransactionsViewModel>(transaction);
+
+            model.PreviousAmount = model.Amount;
+
+            if (model.OperationTypeId == OperationType.Expense)
+            {
+                model.PreviousAmount = model.Amount * -1;
+            }
+
+            model.PreviousAccountId = transaction.AccountId;
+            model.Categories = await GetCategories(userId, transaction.OperationTypeId);
+            model.Accounts = await GetAccounts(userId);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(UpdateTransactionsViewModel model)
+        {
+            var userId = usersService.GetUserId();
+
+            if (!ModelState.IsValid)
+            {
+                model.Accounts = await GetAccounts(userId);
+                model.Categories = await GetCategories(userId, model.OperationTypeId);
+                return View(model);
+            }
+
+            var account = await accountsRepository.GetById(model.AccountId, userId);
+
+            if (account is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            var category = await categoriesRepository.GetById(model.CategoryId, userId);
+
+            if (category is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            var transaction = mapper.Map<Transaction>(model);
+
+            if (model.OperationTypeId == OperationType.Expense)
+            {
+                transaction.Amount *= -1;
+            }
+
+            await transactionsRepository.Update(transaction,
+                model.PreviousAmount, model.PreviousAccountId);
+
+            return RedirectToAction("Index");
+        }
+
+
+
+
+
+
 
 
         private async Task<IEnumerable<SelectListItem>> GetAccounts(int UserId)

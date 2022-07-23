@@ -42,7 +42,7 @@ namespace ExpenseControl_ASP.NET.Services
         public async Task Update(
             Transaction transaction,
             decimal previousAmount,
-            int previousAccount)
+            int previousAccountId)
         {
             using var connection = new SqlConnection(connectionString);
             await connection.ExecuteAsync(
@@ -56,7 +56,7 @@ namespace ExpenseControl_ASP.NET.Services
                     transaction.AccountId,
                     transaction.Note,
                     previousAmount,
-                    previousAccount
+                    previousAccountId
                 },
                 commandType: System.Data.CommandType.StoredProcedure);
         }
@@ -69,7 +69,7 @@ namespace ExpenseControl_ASP.NET.Services
                 FROM Transactions
                 INNER JOIN Categories cat
                 ON cat.Id = Transactions.CategoryId
-                WHERE Transactions.Id = @Id AND Transactions.UserId = @UsuarioId",
+                WHERE Transactions.Id = @Id AND Transactions.UserId = @UserId",
                 new { id, userId });
         }
     }

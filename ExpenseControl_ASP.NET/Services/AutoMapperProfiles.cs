@@ -8,6 +8,7 @@ namespace ExpenseControl_ASP.NET.Services
         public AutoMapperProfiles()
         {
             CreateMap<Account, CreateAccountViewModel>();
+            CreateMap<UpdateTransactionsViewModel, Transaction>().ReverseMap();
         }
     }
 }
