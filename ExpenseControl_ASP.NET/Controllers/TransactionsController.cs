@@ -79,11 +79,6 @@ namespace ExpenseControl_ASP.NET.Controllers
             return RedirectToAction("Index");
         }
 
-
-
-
-
-
         public async Task<IActionResult> Edit(int id)
         {
             var userId = usersService.GetUserId();
