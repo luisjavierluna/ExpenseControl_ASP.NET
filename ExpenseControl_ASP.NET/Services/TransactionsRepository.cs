@@ -8,6 +8,7 @@ namespace ExpenseControl_ASP.NET.Services
     {
         Task Create(Transaction transaction);
         Task Delete(int id);
+        Task<IEnumerable<Transaction>> GetByAccountId(GetTransactionsByAccount model);
         Task<Transaction> GetById(int id, int userId);
         Task Update(Transaction transaction, decimal previousAmount, int previousAccount);
     }
@@ -39,6 +40,24 @@ namespace ExpenseControl_ASP.NET.Services
 
             transaction.Id = id;
         }
+
+        public async Task<IEnumerable<Transaction>> GetByAccountId(
+            GetTransactionsByAccount model)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Transaction>(@"
+                SELECT t.Id, t.Amount, t.TransactionDate, c.Name as Category,
+                acc.Name as Account, c.OperationTypeId
+                FROM Transactions t
+                INNER JOIN Categories c
+                ON c.Id = t.CategoryId
+                INNER JOIN Accounts acc
+                ON acc.Id = t.AccountId
+                WHERE t.AccountId = @AccountId AND t.UserId = @UserId
+                AND TransactionDate BETWEEN @DateStart AND @DateEnd",
+                model);
+        }
+
 
         public async Task Update(
             Transaction transaction,
