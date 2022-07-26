@@ -7,6 +7,7 @@ namespace ExpenseControl_ASP.NET.Services
     public interface ITransactionsRepository
     {
         Task Create(Transaction transaction);
+        Task Delete(int id);
         Task<Transaction> GetById(int id, int userId);
         Task Update(Transaction transaction, decimal previousAmount, int previousAccount);
     }
@@ -71,6 +72,15 @@ namespace ExpenseControl_ASP.NET.Services
                 ON cat.Id = Transactions.CategoryId
                 WHERE Transactions.Id = @Id AND Transactions.UserId = @UserId",
                 new { id, userId });
+        }
+
+        public async Task Delete(int id)
+        {
+            using var connection = new SqlConnection(connectionString);
+            await connection.ExecuteAsync(
+                "Transactions_Delete",
+                new { id },
+                commandType: System.Data.CommandType.StoredProcedure);
         }
     }
 }

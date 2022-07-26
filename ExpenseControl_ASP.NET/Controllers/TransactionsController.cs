@@ -144,12 +144,21 @@ namespace ExpenseControl_ASP.NET.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = usersService.GetUserId();
 
+            var transaction = await transactionsRepository.GetById(id, userId);
 
+            if (transaction is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
 
-
-
-
+            await transactionsRepository.Delete(id);
+            return RedirectToAction("Index");
+        }
 
         private async Task<IEnumerable<SelectListItem>> GetAccounts(int UserId)
         {
