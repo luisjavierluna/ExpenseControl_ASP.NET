@@ -12,17 +12,20 @@ namespace ExpenseControl_ASP.NET.Controllers
         private readonly IAccountsTypesRepository accountsTypesRepository;
         private readonly IAccountsRepository accountsRepository;
         private readonly IMapper mapper;
+        private readonly ITransactionsRepository transactionsRepository;
 
         public AccountsController(
             IUsersService usersService,
             IAccountsTypesRepository accountsTypesRepository,
             IAccountsRepository accountsRepository,
-            IMapper mapper)
+            IMapper mapper,
+            ITransactionsRepository transactionsRepository)
         {
             this.usersService = usersService;
             this.accountsTypesRepository = accountsTypesRepository;
             this.accountsRepository = accountsRepository;
             this.mapper = mapper;
+            this.transactionsRepository = transactionsRepository;
         }
 
         public async Task<IActionResult> Index()
@@ -37,6 +40,60 @@ namespace ExpenseControl_ASP.NET.Controllers
                     AccountType = group.Key,
                     Accounts = group.AsEnumerable()
                 }).ToList();
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Detail(int id, int month, int year)
+        {
+            var userId = usersService.GetUserId();
+            var account = await accountsRepository.GetById(id, userId);
+
+            if (account is null)
+            {
+                return RedirectToAction("ElementNotFound", "Home");
+            }
+
+            DateTime dateStart;
+            DateTime dateEnd;
+
+            if (month <= 0 || month > 12 || year <= 1900)
+            {
+                var today = DateTime.Today;
+                dateStart = new DateTime(today.Year, today.Month, 1);
+            }
+            else
+            {
+                dateStart = new DateTime(year, month, 1);
+            }
+
+            dateEnd = dateStart.AddMonths(1).AddDays(-1);
+
+            var getTransactionsByAccount = new GetTransactionsByAccount()
+            {
+                AccountId = id,
+                UserId = userId,
+                DateStart = dateStart,
+                DateEnd = dateEnd
+            };
+
+            var transactions = await transactionsRepository
+                .GetByAccountId(getTransactionsByAccount);
+
+            var model = new DetailedTransactionsReport();
+            ViewBag.Account = account.Name;
+
+            var transactionsByDate = transactions.OrderByDescending(x => x.TransactionDate)
+                .GroupBy(x => x.TransactionDate)
+                .Select(group => new DetailedTransactionsReport.TransactionsByDate()
+                {
+                    TransactionDate = group.Key,
+                    Transactions = group.AsEnumerable()
+                });
+
+            model.GroupedTransactions = transactionsByDate;
+            model.DateStart = dateStart;
+            model.DateEnd = dateEnd;
 
             return View(model);
         }
