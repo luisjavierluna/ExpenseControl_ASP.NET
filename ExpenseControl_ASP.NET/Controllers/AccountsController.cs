@@ -95,6 +95,11 @@ namespace ExpenseControl_ASP.NET.Controllers
             model.DateStart = dateStart;
             model.DateEnd = dateEnd;
 
+            ViewBag.previousMonth = dateStart.AddMonths(-1).Month;
+            ViewBag.previousYear = dateStart.AddMonths(-1).Year;
+            ViewBag.laterMonth = dateStart.AddMonths(1).Month;
+            ViewBag.laterYear = dateStart.AddMonths(1).Year;
+
             return View(model);
         }
 
