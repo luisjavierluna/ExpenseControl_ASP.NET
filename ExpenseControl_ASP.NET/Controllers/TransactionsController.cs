@@ -79,7 +79,8 @@ namespace ExpenseControl_ASP.NET.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> Edit(int id)
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id, string urlReturn = null)
         {
             var userId = usersService.GetUserId();
             var transaction = await transactionsRepository.GetById(id, userId);
@@ -101,7 +102,7 @@ namespace ExpenseControl_ASP.NET.Controllers
             model.PreviousAccountId = transaction.AccountId;
             model.Categories = await GetCategories(userId, transaction.OperationTypeId);
             model.Accounts = await GetAccounts(userId);
-
+            model.UrlReturn = urlReturn;
             return View(model);
         }
 
@@ -141,11 +142,18 @@ namespace ExpenseControl_ASP.NET.Controllers
             await transactionsRepository.Update(transaction,
                 model.PreviousAmount, model.PreviousAccountId);
 
-            return RedirectToAction("Index");
+            if (string.IsNullOrEmpty(model.UrlReturn))
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return LocalRedirect(model.UrlReturn);
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, string urlReturn = null)
         {
             var userId = usersService.GetUserId();
 
@@ -157,7 +165,16 @@ namespace ExpenseControl_ASP.NET.Controllers
             }
 
             await transactionsRepository.Delete(id);
-            return RedirectToAction("Index");
+
+            if (string.IsNullOrEmpty(urlReturn))
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return LocalRedirect(urlReturn);
+            }
+
         }
 
         private async Task<IEnumerable<SelectListItem>> GetAccounts(int UserId)

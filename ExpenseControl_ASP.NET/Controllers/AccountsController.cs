@@ -99,6 +99,7 @@ namespace ExpenseControl_ASP.NET.Controllers
             ViewBag.previousYear = dateStart.AddMonths(-1).Year;
             ViewBag.laterMonth = dateStart.AddMonths(1).Month;
             ViewBag.laterYear = dateStart.AddMonths(1).Year;
+            ViewBag.urlReturn = HttpContext.Request.Path + HttpContext.Request.QueryString;
 
             return View(model);
         }
