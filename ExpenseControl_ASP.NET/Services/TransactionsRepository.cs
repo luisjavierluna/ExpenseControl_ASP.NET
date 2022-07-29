@@ -10,6 +10,7 @@ namespace ExpenseControl_ASP.NET.Services
         Task Delete(int id);
         Task<IEnumerable<Transaction>> GetByAccountId(GetTransactionsByAccount model);
         Task<Transaction> GetById(int id, int userId);
+        Task<IEnumerable<Transaction>> GetByUserId(GetTransactionsPerUserParameter model);
         Task Update(Transaction transaction, decimal previousAmount, int previousAccount);
     }
 
