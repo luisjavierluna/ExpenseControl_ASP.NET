@@ -58,6 +58,24 @@ namespace ExpenseControl_ASP.NET.Services
                 model);
         }
 
+        public async Task<IEnumerable<Transaction>> GetByUserId(
+            GetTransactionsPerUserParameter model)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<Transaction>(@"
+                SELECT t.Id, t.Amount, t.TransactionDate, c.Name as Category,
+                acc.Name as Account, c.OperationTypeId
+                FROM Transactions t
+                INNER JOIN Categories c
+                ON c.Id = t.CategoryId
+                INNER JOIN Accounts acc
+                ON acc.Id = t.AccountId
+                WHERE t.UserId = @UserId
+                AND TransactionDate BETWEEN @DateStart AND @DateEnd
+                ORDER BY t.TransactionDate DESC",
+                model);
+        }
+
 
         public async Task Update(
             Transaction transaction,

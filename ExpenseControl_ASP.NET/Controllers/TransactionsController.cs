@@ -166,6 +166,7 @@ namespace ExpenseControl_ASP.NET.Controllers
 
             await transactionsRepository.Delete(id);
 
+
             if (string.IsNullOrEmpty(urlReturn))
             {
                 return RedirectToAction("Index");
