@@ -1,6 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Transactions";
+﻿@model DetailedTransactionsReport
+
+@{
+    ViewData["Title"] = "Daily Report";
 }
 
-<h1>Transactions Index</h1>
-
+<partial name="_DetailedTransactionsReport" model="Model" />
