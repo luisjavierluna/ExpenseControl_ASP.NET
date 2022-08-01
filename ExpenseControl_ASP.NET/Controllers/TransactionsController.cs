@@ -13,69 +13,30 @@ namespace ExpenseControl_ASP.NET.Controllers
         private readonly ICategoriesRepository categoriesRepository;
         private readonly ITransactionsRepository transactionsRepository;
         private readonly IMapper mapper;
+        private readonly IReportsService reportsService;
 
         public TransactionsController(
             IUsersService usersService,
             IAccountsRepository accountsRepository,
             ICategoriesRepository categoriesRepository,
             ITransactionsRepository transactionsRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IReportsService reportsService)
         {
             this.usersService = usersService;
             this.accountsRepository = accountsRepository;
             this.categoriesRepository = categoriesRepository;
             this.transactionsRepository = transactionsRepository;
             this.mapper = mapper;
+            this.reportsService = reportsService;
         }
 
         public async Task<IActionResult> Index(int month, int year)
         {
             var userId = usersService.GetUserId();
 
-            DateTime dateStart;
-            DateTime dateEnd;
-
-            if (month <= 0 || month > 12 || year <= 1900)
-            {
-                var today = DateTime.Today;
-                dateStart = new DateTime(today.Year, today.Month, 1);
-            }
-            else
-            {
-                dateStart = new DateTime(year, month, 1);
-            }
-
-            dateEnd = dateStart.AddMonths(1).AddDays(-1);
-
-            var parameter = new GetTransactionsPerUserParameter()
-            {
-                UserId = userId,
-                DateStart = dateStart,
-                DateEnd = dateEnd
-            };
-
-            var transactions = await transactionsRepository
-                .GetByUserId(parameter);
-
-            var model = new DetailedTransactionsReport();
-
-            var transactionsByDate = transactions.OrderByDescending(x => x.TransactionDate)
-                .GroupBy(x => x.TransactionDate)
-                .Select(group => new DetailedTransactionsReport.TransactionsByDate()
-                {
-                    TransactionDate = group.Key,
-                    Transactions = group.AsEnumerable()
-                });
-
-            model.GroupedTransactions = transactionsByDate;
-            model.DateStart = dateStart;
-            model.DateEnd = dateEnd;
-
-            ViewBag.previousMonth = dateStart.AddMonths(-1).Month;
-            ViewBag.previousYear = dateStart.AddMonths(-1).Year;
-            ViewBag.laterMonth = dateStart.AddMonths(1).Month;
-            ViewBag.laterYear = dateStart.AddMonths(1).Year;
-            ViewBag.urlReturn = HttpContext.Request.Path + HttpContext.Request.QueryString;
+            var model = await reportsService
+                .GetDetailedTransactionReport(userId, month, year, ViewBag);
 
             return View(model);
         }
