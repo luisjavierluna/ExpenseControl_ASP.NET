@@ -41,6 +41,27 @@ namespace ExpenseControl_ASP.NET.Controllers
             return View(model);
         }
 
+        public IActionResult Weekly()
+        {
+            return View();
+        }
+
+        public IActionResult Monthly()
+        {
+            return View();
+        }
+
+        public IActionResult ExcelReport()
+        {
+            return View();
+        }
+
+        public IActionResult Calendar()
+        {
+            return View();
+        }
+
+
         public async Task<IActionResult> Create()
         {
             var userId = usersService.GetUserId();
