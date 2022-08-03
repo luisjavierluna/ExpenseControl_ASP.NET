@@ -6,6 +6,7 @@ namespace ExpenseControl_ASP.NET.Services
     {
         Task<DetailedTransactionsReport> GetDetailedTransactionReport(int userId, int month, int year, dynamic ViewBag);
         Task<DetailedTransactionsReport> GetDetailedTransactionReportByAccount(int userId, int accountId, int month, int year, dynamic ViewBag);
+        Task<IEnumerable<ResultGetPerWeek>> GetWeeklyReport(int userId, int month, int year, dynamic ViewBag);
     }
 
     public class ReportsService : IReportsService
@@ -20,6 +21,27 @@ namespace ExpenseControl_ASP.NET.Services
             this.transactionsRepository = transactionsRepository;
             this.httpContext = httpContextAccessor.HttpContext;
         }
+
+        public async Task<IEnumerable<ResultGetPerWeek>> GetWeeklyReport(
+            int userId,
+            int month,
+            int year,
+            dynamic ViewBag)
+        {
+            (DateTime dateStart, DateTime dateEnd) = GenerateDateStartAndEnd(month, year);
+
+            var parameter = new GetTransactionsPerUserParameter()
+            {
+                UserId = userId,
+                DateStart = dateStart,
+                DateEnd = dateEnd
+            };
+            
+            AssignValuesToViewBag(ViewBag, dateStart);
+            var model = await transactionsRepository.GetPerWeek(parameter);
+            return model;
+        }
+
 
         public async Task<DetailedTransactionsReport>
             GetDetailedTransactionReport(

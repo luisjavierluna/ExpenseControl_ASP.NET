@@ -41,8 +41,12 @@ namespace ExpenseControl_ASP.NET.Controllers
             return View(model);
         }
 
-        public IActionResult Weekly()
+        public async Task<IActionResult> Weekly(int month, int year)
         {
+            var userId = usersService.GetUserId();
+            IEnumerable<ResultGetPerWeek> transactionsPerWeek = await reportsService
+                .GetWeeklyReport(userId, month, year, ViewBag);
+
             return View();
         }
 
