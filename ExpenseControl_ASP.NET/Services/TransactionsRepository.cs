@@ -11,6 +11,7 @@ namespace ExpenseControl_ASP.NET.Services
         Task<IEnumerable<Transaction>> GetByAccountId(GetTransactionsByAccount model);
         Task<Transaction> GetById(int id, int userId);
         Task<IEnumerable<Transaction>> GetByUserId(GetTransactionsPerUserParameter model);
+        Task<IEnumerable<ResultGetPerWeek>> GetPerWeek(GetTransactionsPerUserParameter model);
         Task Update(Transaction transaction, decimal previousAmount, int previousAccount);
     }
 
@@ -111,6 +112,23 @@ namespace ExpenseControl_ASP.NET.Services
                 WHERE Transactions.Id = @Id AND Transactions.UserId = @UserId",
                 new { id, userId });
         }
+
+        public async Task<IEnumerable<ResultGetPerWeek>> GetPerWeek(
+            GetTransactionsPerUserParameter model)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<ResultGetPerWeek>(@"
+                SELECT DATEDIFF(d, @DateStart, TransactionDate) / 7 + 1 as Week,
+                SUM(Amount) as Amount, cat.OperationTypeId
+                FROM Transactions
+                INNER JOIN Categories cat
+                ON cat.Id = Transactions.CategoryId
+                WHERE Transactions.UserId = @UserId AND
+                TransactionDate BETWEEN @DateStart AND @DateEnd
+                GROUP BY DATEDIFF(d, @DateStart, TransactionDate) / 7, cat.OperationTypeId",
+                model);
+        }
+
 
         public async Task Delete(int id)
         {
