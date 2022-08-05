@@ -47,7 +47,59 @@ namespace ExpenseControl_ASP.NET.Controllers
             IEnumerable<ResultGetPerWeek> transactionsPerWeek = await reportsService
                 .GetWeeklyReport(userId, month, year, ViewBag);
 
-            return View();
+            var grouped = transactionsPerWeek.GroupBy(x => x.Week).Select(x =>
+                new ResultGetPerWeek()
+                {
+                    Week = x.Key,
+                    Incomes = x.Where(x => x.OperationTypeId == OperationType.Income)
+                        .Select(x => x.Amount).FirstOrDefault(),
+                    Expenses = x.Where(x => x.OperationTypeId == OperationType.Expense)
+                        .Select(x => x.Amount).FirstOrDefault()
+                }).ToList();
+
+            if (year == 0 || month == 0)
+            {
+                var today = DateTime.Today;
+                year = today.Year;
+                month = today.Month;
+            }
+
+            var referenceDate
+                = new DateTime(year, month, 1);
+            var monthDays = Enumerable.Range(1, referenceDate.AddMonths(1).AddDays(-1).Day);
+
+            var segmentedDays = monthDays.Chunk(7).ToList();
+
+            for (int i = 0; i < segmentedDays.Count(); i++)
+            {
+                var week = i + 1;
+                var dateStart = new DateTime(year, month, segmentedDays[i].First());
+                var dateEnd = new DateTime(year, month, segmentedDays[i].Last());
+                var weekGroup = grouped.FirstOrDefault(x => x.Week == week);
+
+                if (weekGroup is null)
+                {
+                    grouped.Add(new ResultGetPerWeek()
+                    {
+                        Week = week,
+                        DateStart = dateStart,
+                        DateEnd = dateEnd
+                    });
+                }
+                else
+                {
+                    weekGroup.DateStart = dateStart;
+                    weekGroup.DateEnd = dateEnd;
+                }
+            }
+
+            grouped = grouped.OrderByDescending(x => x.Week).ToList();
+
+            var model = new WeeklyReportViewModel();
+            model.TransactionsPerWeek = grouped;
+            model.ReferenceDate = referenceDate;
+
+            return View(model);
         }
 
         public IActionResult Monthly()
