@@ -1,5 +1,14 @@
 ﻿@model DetailedTransactionsReport
 
+@{
+    var amountsSummary = new AmountsSummaryViewModel()
+    {
+        Incomes = Model.DepositsBalance,
+        Expenses = Model.WithdrawalsBalance,
+        GreatTotal = Model.Total
+    };
+}
+
 <h4>
     <a asp-route-month="@ViewBag.previousMonth" asp-route-year="@ViewBag.previousYear"
     class="btn btn-secondary"><i class="bi-chevron-left"></i></a>
@@ -8,32 +17,7 @@
     class="btn btn-secondary"><i class="bi-chevron-right"></i></a>
 </h4>
 
-<div class="container-totals mb-3">
-    <div>
-        <div>
-            <strong>Deposits</strong>
-        </div>
-        <div class="positiveBalance">
-            @Model.DepositsBalance.ToString("N")
-        </div>
-    </div>
-    <div>
-        <div>
-            <strong>Withdrawals</strong>
-        </div>
-        <div class="negativeBalance">
-            @Model.WithdrawalsBalance.ToString("N")
-        </div>
-    </div>
-    <div>
-        <div>
-            <strong>Great Total</strong>
-        </div>
-        <div>
-            @Model.Total.ToString("N")
-        </div>
-    </div>
-</div>
+<partial name="_AmountsSummary" model="@amountsSummary" />
 
 @if(Model.GroupedTransactions.Count() == 0)
 {
