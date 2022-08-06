@@ -1,5 +1,42 @@
-﻿@{
+﻿@model WeeklyReportViewModel
+
+@{
     ViewData["Title"] = "Weekly Report";
+
+        string FormatDate(DateTime date)
+    {
+        return date.ToString("MM.dd");
+    }
 }
 
 <partial name="_Submenu" Model="TransactionsSubMenu.Weekly" />
+
+<table class="table" style="font-size: 20px;">
+    <thead>
+        <tr>
+            <th>Week</th>
+            <th style="text-align: right">Incomes</th>
+            <th style="text-align: right">Expenses</th>
+        </tr>
+    </thead>
+    @foreach(var transactionsPerWeek in Model.TransactionsPerWeek)
+    {
+        <tr>
+            <td>
+                <a style="text-decoration: none" asp-action="Index"
+                asp-route-año="@Model.ReferenceDate.Year"
+                asp-route-mes="@Model.ReferenceDate.Month"
+                >
+                    @FormatDate(transactionsPerWeek.DateStart) ~
+                    @FormatDate(transactionsPerWeek.DateEnd)
+                </a>
+            </td>
+            <td class="positiveBalance" style="text-align: right">
+                @transactionsPerWeek.Incomes
+            </td>
+            <td class="negativeBalance" style="text-align: right">
+                @transactionsPerWeek.Expenses
+            </td>
+        </tr>
+    }
+</table>
