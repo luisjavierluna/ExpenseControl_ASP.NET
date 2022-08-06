@@ -9,13 +9,7 @@
     };
 }
 
-<h4>
-    <a asp-route-month="@ViewBag.previousMonth" asp-route-year="@ViewBag.previousYear"
-    class="btn btn-secondary"><i class="bi-chevron-left"></i></a>
-    @Model.DateStart.ToString("MMM")-@Model.DateStart.Year
-    <a asp-route-month="@ViewBag.laterMonth" asp-route-year="@ViewBag.laterYear"
-    class="btn btn-secondary"><i class="bi-chevron-right"></i></a>
-</h4>
+<partial name="_BrowseMonths" model="@Model.DateStart" />
 
 <partial name="_AmountsSummary" model="@amountsSummary" />
 
