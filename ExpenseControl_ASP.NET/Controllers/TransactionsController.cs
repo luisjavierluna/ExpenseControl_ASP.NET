@@ -102,10 +102,54 @@ namespace ExpenseControl_ASP.NET.Controllers
             return View(model);
         }
 
-        public IActionResult Monthly()
+        public async Task<IActionResult> Monthly(int year)
         {
-            return View();
+            var userId = usersService.GetUserId();
+
+            if (year == 0)
+            {
+                year = DateTime.Today.Year;
+            }
+
+            var transactionsPerMonth = await transactionsRepository.GetPerMonth(userId, year);
+
+            var groupedTransactions = transactionsPerMonth.GroupBy(x => x.Month)
+                .Select(x => new ResultGetPerMonth()
+                {
+                    Month = x.Key,
+                    Income = x.Where(x => x.OperationTypeId == OperationType.Income)
+                        .Select(x => x.Amount).FirstOrDefault(),
+                    Expense = x.Where(x => x.OperationTypeId == OperationType.Expense)
+                        .Select(x => x.Amount).FirstOrDefault()
+                }).ToList();
+
+            for (int month = 1; month <= 12; month++)
+            {
+                var transaction = groupedTransactions.FirstOrDefault(x => x.Month == month);
+                var referenceDate = new DateTime(year, month, 1);
+                if (transaction is null)
+                {
+                    groupedTransactions.Add(new ResultGetPerMonth()
+                    {
+                        Month = month,
+                        ReferenceDate = referenceDate
+                    });
+                }
+                else
+                {
+                    transaction.ReferenceDate = referenceDate;
+                }
+            }
+
+            groupedTransactions = groupedTransactions.OrderByDescending(x => x.Month).ToList();
+
+            var model = new MonthlyReportViewModel();
+            model.Year = year;
+            model.TransactionsPerMonth = groupedTransactions;
+
+            return View(model);
         }
+
 
         public IActionResult ExcelReport()
         {
