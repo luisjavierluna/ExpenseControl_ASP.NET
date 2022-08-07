@@ -129,6 +129,20 @@ namespace ExpenseControl_ASP.NET.Services
                 model);
         }
 
+        public async Task<IEnumerable<ResultGetPerMonth>> GetPerMonth(int userId, int year)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.QueryAsync<ResultGetPerMonth>(@"
+                SELECT MONTH(TransactionDate) as Month,
+                SUM(Amount) as Amount, cat.OperationTypeId
+                FROM Transactions
+                INNER JOIN Categories cat
+                ON cat.Id = Transactions.CategoryId
+                WHERE Transactions.UserId = @UserId AND YEAR(TransactionDate) = @Year
+                GROUP BY MONTH(TransactionDate), cat.OperationTypeId",
+                new { userId, year });
+        }
+
 
         public async Task Delete(int id)
         {
