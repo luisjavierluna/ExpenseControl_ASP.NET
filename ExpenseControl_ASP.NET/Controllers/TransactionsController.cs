@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using ClosedXML.Excel;
 using ExpenseControl_ASP.NET.Models;
 using ExpenseControl_ASP.NET.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data;
 
 namespace ExpenseControl_ASP.NET.Controllers
 {
@@ -154,6 +156,64 @@ namespace ExpenseControl_ASP.NET.Controllers
         public IActionResult ExcelReport()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<FileResult> ExportExcelPerMonth(int month, int year)
+        {
+            var dateStart = new DateTime(year, month, 1);
+            var dateEnd = dateStart.AddMonths(1).AddDays(-1);
+            var userId = usersService.GetUserId();
+
+            var transactions = await transactionsRepository.GetByUserId(
+                new GetTransactionsPerUserParameter
+                {
+                    UserId = userId,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd
+                });
+
+            var fileName = $"Expense Control - {dateStart.ToString("MMM yyyy")}.xlsx";
+            return GenerateExcel(fileName, transactions);
+        }
+
+        private FileResult GenerateExcel(string fileName,
+            IEnumerable<Transaction> transactions)
+        {
+            DataTable dataTable = new DataTable("Transactions");
+            dataTable.Columns.AddRange(new DataColumn[]
+            {
+                    new DataColumn("Data"),
+                    new DataColumn("Account"),
+                    new DataColumn("Category"),
+                    new DataColumn("Note"),
+                    new DataColumn("Amount"),
+                    new DataColumn("Income/Expense"),
+            });
+
+            foreach (var transaction in transactions)
+            {
+                dataTable.Rows.Add(
+                    transaction.TransactionDate,
+                    transaction.Account,
+                    transaction.Category,
+                    transaction.Note,
+                    transaction.Amount,
+                    transaction.OperationTypeId);
+            }
+
+            using (XLWorkbook wb = new XLWorkbook())
+            {
+                wb.Worksheets.Add(dataTable);
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    wb.SaveAs(stream);
+                    return File(stream.ToArray(),
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        fileName);
+                }
+            }
         }
 
         public IActionResult Calendar()
