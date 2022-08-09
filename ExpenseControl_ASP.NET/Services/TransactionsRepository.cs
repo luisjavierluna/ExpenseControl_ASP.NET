@@ -67,7 +67,7 @@ namespace ExpenseControl_ASP.NET.Services
             using var connection = new SqlConnection(connectionString);
             return await connection.QueryAsync<Transaction>(@"
                 SELECT t.Id, t.Amount, t.TransactionDate, c.Name as Category,
-                acc.Name as Account, c.OperationTypeId
+                acc.Name as Account, c.OperationTypeId, Note
                 FROM Transactions t
                 INNER JOIN Categories c
                 ON c.Id = t.CategoryId
