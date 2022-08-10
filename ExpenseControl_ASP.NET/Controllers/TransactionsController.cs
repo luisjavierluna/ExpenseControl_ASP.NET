@@ -177,6 +177,44 @@ namespace ExpenseControl_ASP.NET.Controllers
             return GenerateExcel(fileName, transactions);
         }
 
+        [HttpGet]
+        public async Task<FileResult> ExportExcelPerYear(int year)
+        {
+            var dateStart = new DateTime(year, 1, 1);
+            var dateEnd = dateStart.AddYears(1).AddDays(-1);
+            var userId = usersService.GetUserId();
+
+            var transactions = await transactionsRepository.GetByUserId(
+                new GetTransactionsPerUserParameter
+                {
+                    UserId = userId,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd
+                });
+
+            var fileName = $"Expense Controller - {dateStart.ToString("yyyy")}.xlsx";
+            return GenerateExcel(fileName, transactions);
+        }
+
+        [HttpGet]
+        public async Task<FileResult> ExportExcelAll()
+        {
+            var dateStart = DateTime.Today.AddYears(-100);
+            var dateEnd = DateTime.Today.AddYears(1000);
+            var userId = usersService.GetUserId();
+
+            var transactions = await transactionsRepository.GetByUserId(
+                new GetTransactionsPerUserParameter
+                {
+                    UserId = userId,
+                    DateStart = dateStart,
+                    DateEnd = dateEnd
+                });
+
+            var fileName = $"Expense Control - {DateTime.Today.ToString("dd-MM-yyyy")}.xlsx";
+            return GenerateExcel(fileName, transactions);
+        }
+
         private FileResult GenerateExcel(string fileName,
             IEnumerable<Transaction> transactions)
         {

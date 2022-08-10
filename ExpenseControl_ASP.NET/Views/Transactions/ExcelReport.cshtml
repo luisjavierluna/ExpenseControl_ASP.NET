@@ -5,7 +5,8 @@
     var currentMonth = today.Month;
     var currentYear = today.Year;
     var lastMonth = oneMonthAgo.Month;
-    var lastYear = oneMonthAgo.Year;
+    var lastMonthYear = oneMonthAgo.Year;
+    var lastYear = currentYear - 1;
 }
 
 <partial name="_SubMenu" Model="TransactionsSubMenu.Excel" />
@@ -21,7 +22,7 @@
 </div>
 
 <div class="mb-3">
-    <a asp-action="ExportExcelPerMonth" asp-route-mes="@lastMonth" asp-route-año="@lastYear"
+    <a asp-action="ExportExcelPerMonth" asp-route-month="@lastMonth" asp-route-year="@lastMonthYear"
     class="btn btn-success"
     >
         Export last month
@@ -29,23 +30,23 @@
 </div>
 
 <div class="mb-3">
-    <a asp-action="ExportExcelPerMonth" asp-route-mes="@lastMonth" asp-route-año="@lastYear"
+    <a asp-action="ExportExcelPerYear" asp-route-year="@currentYear"
     class="btn btn-success"
     >
         Export current year
-    </a> ~ @today.ToString("MMMM yyyyy")
+    </a> ~ @currentYear
 </div>
 
 <div class="mb-3">
-    <a asp-action="ExportExcelPerMonth" asp-route-mes="@lastMonth" asp-route-año="@lastYear"
+    <a asp-action="ExportExcelPerYear" asp-route-year="@lastYear"
     class="btn btn-success"
     >
         Export last year
-    </a> ~ @today.ToString("MMMM yyyyy")
+    </a> ~ @lastYear
 </div>
 
 <div class="mb-3">
-    <a asp-action="ExportExcelPerMonth" asp-route-mes="@lastMonth" asp-route-año="@lastYear"
+    <a asp-action="ExportExcelAll"
     class="btn btn-success"
     >
         Export All
