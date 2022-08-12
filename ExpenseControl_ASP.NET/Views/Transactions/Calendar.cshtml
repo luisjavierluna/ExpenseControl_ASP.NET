@@ -2,4 +2,22 @@
     ViewData["Title"] = "Calendar Report";
 }
 
-<partial name="_Submenu" Model="TransactionsSubMenu.Calendar" />
+<partial name="_SubMenu" Model="TransactionsSubMenu.Calendar" />
+
+<div id="calendar"></div>
+
+@section Scripts{
+    <script src="~/lib/fullcalendar/main.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                dayMaxEventRows: 3,
+                initialView: 'dayGridMonth'
+            });
+
+            calendar.render();
+        })
+    </script>
+}
