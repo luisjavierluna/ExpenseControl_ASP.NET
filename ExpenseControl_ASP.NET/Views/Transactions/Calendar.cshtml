@@ -15,41 +15,7 @@
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 dayMaxEventRows: 3,
                 initialView: 'dayGridMonth',
-                events: [
-                    {
-                        title: '2,500',
-                        start: '2022-05-31',
-                        end: '2022-05-31'
-                    },
-                    {
-                        title: '1,500',
-                        start: '2022-05-31',
-                        end: '2022-05-31',
-                        color: 'red'
-                    },
-                    {
-                        title: '700',
-                        start: '2022-05-31',
-                        end: '2022-05-31'
-                    },
-                    {
-                        title: '800',
-                        start: '2022-05-31',
-                        end: '2022-05-31',
-                        color: 'red'
-                    },
-                    {
-                        title: '585.99',
-                        start: '2022-05-31',
-                        end: '2022-05-31'
-                    },
-                    {
-                        title: '300',
-                        start: '2022-06-01',
-                        end: '2022-05-31',
-                        color: 'red'
-                    }
-                ]
+                events: '/transactions/GetCalendarTransactions'
             });
 
             calendar.render();

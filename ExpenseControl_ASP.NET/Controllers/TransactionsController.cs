@@ -259,6 +259,28 @@ namespace ExpenseControl_ASP.NET.Controllers
             return View();
         }
 
+        public async Task<JsonResult> GetCalendarTransactions(DateTime start, DateTime end)
+        {
+            var userId = usersService.GetUserId();
+            var transactions = await transactionsRepository.GetByUserId(
+                new GetTransactionsPerUserParameter
+                {
+                    UserId = userId,
+                    DateStart = start,
+                    DateEnd = end
+                });
+
+            var calendarEvents = transactions.Select(transaction => new CalendarEvent()
+            {
+                Title = transaction.Amount.ToString("N"),
+                Start = transaction.TransactionDate.ToString("yyyy-MM-dd"),
+                End = transaction.TransactionDate.ToString("yyyy-MM-dd"),
+                Color = (transaction.OperationTypeId == OperationType.Expense) ? "Red" : null
+            });
+
+            return Json(calendarEvents);
+        }
+
 
         public async Task<IActionResult> Create()
         {
