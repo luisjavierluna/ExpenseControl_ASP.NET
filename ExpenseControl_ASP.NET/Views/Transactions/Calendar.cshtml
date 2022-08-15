@@ -15,10 +15,25 @@
             const calendar = new FullCalendar.Calendar(calendarEl, {
                 dayMaxEventRows: 3,
                 initialView: 'dayGridMonth',
-                events: '/transactions/GetCalendarTransactions'
+                events: '/transactions/GetCalendarTransactions',
+                dateClick: async function(info){
+                    await findTransactionsByDate(info.dateStr);
+                }
+            });
+            calendar.render();
+        });
+
+        async function findTransactionsByDate(date) {
+            const response = await fetch(`/Transactions/GetTransactionsByDate?date=${date}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
 
-            calendar.render();
-        })
+            const json = await response.json();
+            console.log(json);
+        }
+
     </script>
 }

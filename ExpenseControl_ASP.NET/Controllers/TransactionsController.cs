@@ -281,6 +281,21 @@ namespace ExpenseControl_ASP.NET.Controllers
             return Json(calendarEvents);
         }
 
+        public async Task<JsonResult> GetTransactionsByDate(DateTime date)
+        {
+            var userId = usersService.GetUserId();
+
+            var transactions = await transactionsRepository.GetByUserId(
+                new GetTransactionsPerUserParameter
+                {
+                    UserId = userId,
+                    DateStart = date,
+                    DateEnd = date
+                });
+
+            return Json(transactions);
+        }
+
 
         public async Task<IActionResult> Create()
         {
