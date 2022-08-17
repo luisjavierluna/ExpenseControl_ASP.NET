@@ -6,6 +6,35 @@
 
 <div id="calendar"></div>
 
+<div class="modal fade" id="modalTransactions" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Transactions of the Day</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th id="modalTableDate" colspan="2"></th>
+                            <th id="modalTableIncomes" class="positiveBalance"></th>
+                            <th id="modalTableExpenses" class="negativeBalance"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts{
     <script src="~/lib/fullcalendar/main.min.js"></script>
 
@@ -32,7 +61,43 @@
             });
 
             const json = await response.json();
-            console.log(json);
+
+            let incomes = 0;
+            let expenses = 0;
+            const operationTypesIncomes = 1;
+
+            const formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            });
+
+            const rows = json.map(transaction => {
+                if (transaction.operationTypeId === operationTypesIncomes) {
+                    incomes += transaction.amount;
+                } else {
+                    expenses += transaction.amount;
+                }
+
+                return `<tr>
+                            <td>${transaction.category}</td>
+                            <td>${transaction.account}</td>
+                            <td align="right" colspan="2"
+                                    class=${transaction.operationTypeId === operationTypesIncomes ?
+                        'positiveBalance' : 'negativeBalance'}>
+                                ${formatter.format(transaction.amount)}
+                                </td>
+                        </tr>`;
+            });
+
+            $("#modalTableBody").html(rows);
+            $("#modalTableIncomes").html(formatter.format(incomes));
+            $("#modalTableExpenses").html(formatter.format(expenses));
+            $("#modalTableDate").html(date);
+
+            const modalTransactions =
+                new bootstrap.Modal(document.getElementById('modalTransactions'));
+
+            modalTransactions.show();
         }
 
     </script>
