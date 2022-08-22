@@ -12,6 +12,7 @@ builder.Services.AddTransient<ITransactionsRepository, TransactionsRepository>()
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IReportsService, ReportsService>();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 
 var app = builder.Build();
 
