@@ -1,4 +1,6 @@
+using ExpenseControl_ASP.NET.Models;
 using ExpenseControl_ASP.NET.Services;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IReportsService, ReportsService>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddTransient<IUsersRepository, UsersRepository>();
+builder.Services.AddTransient<IUserStore<User>, UserStore>();
+builder.Services.AddIdentityCore<User>();
+
 
 var app = builder.Build();
 

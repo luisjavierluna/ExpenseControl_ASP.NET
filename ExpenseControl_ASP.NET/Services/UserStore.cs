@@ -6,9 +6,17 @@ namespace ExpenseControl_ASP.NET.Services
     public class UserStore : IUserStore<User>, IUserEmailStore<User>,
         IUserPasswordStore<User>
     {
-        public Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
+        private readonly IUsersRepository usersRepository;
+
+        public UserStore(IUsersRepository usersRepository)
         {
-            throw new NotImplementedException();
+            this.usersRepository = usersRepository;
+        }
+
+        public async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
+        {
+            user.Id = await usersRepository.CreateUser(user);
+            return IdentityResult.Success;
         }
 
         public Task<IdentityResult> DeleteAsync(User user, CancellationToken cancellationToken)
@@ -21,9 +29,9 @@ namespace ExpenseControl_ASP.NET.Services
             throw new NotImplementedException();
         }
 
-        public Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+        public async Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await usersRepository.SearchUserByEmail(normalizedEmail);
         }
 
         public Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
@@ -31,14 +39,14 @@ namespace ExpenseControl_ASP.NET.Services
             throw new NotImplementedException();
         }
 
-        public Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        public async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await usersRepository.SearchUserByEmail(normalizedUserName);
         }
 
         public Task<string> GetEmailAsync(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.Email);
         }
 
         public Task<bool> GetEmailConfirmedAsync(User user, CancellationToken cancellationToken)
@@ -58,17 +66,17 @@ namespace ExpenseControl_ASP.NET.Services
 
         public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.PasswordHash);
         }
 
         public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.Id.ToString());
         }
 
         public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.Email);
         }
 
         public Task<bool> HasPasswordAsync(User user, CancellationToken cancellationToken)
@@ -88,17 +96,19 @@ namespace ExpenseControl_ASP.NET.Services
 
         public Task SetNormalizedEmailAsync(User user, string normalizedEmail, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            user.NormalizedEmail = normalizedEmail;
+            return Task.CompletedTask;
         }
 
         public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            user.PasswordHash = passwordHash;
+            return Task.CompletedTask;
         }
 
         public Task SetUserNameAsync(User user, string userName, CancellationToken cancellationToken)
