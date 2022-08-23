@@ -26,7 +26,6 @@ namespace ExpenseControl_ASP.NET.Services
 
         public void Dispose()
         {
-            throw new NotImplementedException();
         }
 
         public async Task<User> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)

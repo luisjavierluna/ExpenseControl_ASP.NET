@@ -21,11 +21,11 @@ namespace ExpenseControl_ASP.NET.Services
 
         public async Task<int> CreateUser(User user)
         {
-            // user.NormalizedEmail = user.Email.ToUpper();
             using var connection = new SqlConnection(connectionString);
             var id = await connection.QuerySingleAsync<int>(@"
                 INSERT INTO Users(Email, NormalizedEmail, PasswordHash)
-                VALUES (@Email, @NormalizedEmail, @PasswordHash)",
+                VALUES (@Email, @NormalizedEmail, @PasswordHash)
+                SELECT SCOPE_IDENTITY();",
                 user);
             return id;
         }
