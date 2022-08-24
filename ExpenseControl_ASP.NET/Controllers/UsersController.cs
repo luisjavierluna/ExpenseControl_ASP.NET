@@ -7,10 +7,14 @@ namespace ExpenseControl_ASP.NET.Controllers
     public class UsersController : Controller
     {
         private readonly UserManager<User> userManager;
+        private readonly SignInManager<User> signInManager;
 
-        public UsersController(UserManager<User> userManager)
+        public UsersController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager)
         {
             this.userManager = userManager;
+            this.signInManager = signInManager;
         }
 
         public IActionResult SignUp()
@@ -32,6 +36,7 @@ namespace ExpenseControl_ASP.NET.Controllers
 
             if (result.Succeeded)
             {
+                await signInManager.SignInAsync(user, isPersistent: true);
                 return RedirectToAction("Index", "Transactions");
             }
             else
