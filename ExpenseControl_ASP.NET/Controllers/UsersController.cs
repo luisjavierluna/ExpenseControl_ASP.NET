@@ -1,4 +1,5 @@
 ﻿using ExpenseControl_ASP.NET.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,6 +49,14 @@ namespace ExpenseControl_ASP.NET.Controllers
                 return View(model);
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+            return RedirectToAction("Index", "Transacciones");
+        }
+
     }
 
 }
