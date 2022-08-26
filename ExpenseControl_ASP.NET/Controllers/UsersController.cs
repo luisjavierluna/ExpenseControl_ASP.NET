@@ -50,11 +50,39 @@ namespace ExpenseControl_ASP.NET.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await signInManager.PasswordSignInAsync(model.Email,
+                model.Password, model.RememberMe, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Transactions");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Incorrect password and/or user name");
+                return View(model);
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-            return RedirectToAction("Index", "Transacciones");
+            return RedirectToAction("Index", "Transactions");
         }
 
     }
