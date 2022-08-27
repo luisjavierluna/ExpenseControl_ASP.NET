@@ -1,5 +1,6 @@
 ﻿using ExpenseControl_ASP.NET.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +19,14 @@ namespace ExpenseControl_ASP.NET.Controllers
             this.signInManager = signInManager;
         }
 
+        [AllowAnonymous]
         public IActionResult SignUp()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> SignUp(SignUpViewModel model)
         {
             if (!ModelState.IsValid)
@@ -51,12 +54,14 @@ namespace ExpenseControl_ASP.NET.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
