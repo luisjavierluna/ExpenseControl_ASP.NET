@@ -9,8 +9,8 @@ namespace ExpenseControl_ASP.NET.Services
         Task Create(Category category);
         Task Delete(int id);
         Task<Category> GetById(int id, int userId);
-        Task<IEnumerable<Category>> GetCategories(int userId);
         Task<IEnumerable<Category>> GetCategories(int userId, OperationType operationTypeId);
+        Task<IEnumerable<Category>> GetCategories(int userId, PaginationViewModel pagination);
         Task Update(Category category);
     }
 
@@ -34,11 +34,16 @@ namespace ExpenseControl_ASP.NET.Services
             category.Id = id;
         }
 
-        public async Task<IEnumerable<Category>> GetCategories(int userId)
+        public async Task<IEnumerable<Category>> GetCategories(int userId, PaginationViewModel pagination)
         {
             using var connection = new SqlConnection(connectionString);
-            return await connection.QueryAsync<Category>(
-                "SELECT * FROM Categories WHERE UserId = @UserId",
+            return await connection.QueryAsync<Category>(@$"
+                SELECT * 
+                FROM Categories WHERE 
+                UserId = @UserId
+                ORDER BY Name
+                OFFSET {pagination.RecordsToAvoid} ROWS FETCH NEXT
+                    {pagination.RecordsPerPage} ROWS ONLY",
                 new { userId });
         }
 

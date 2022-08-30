@@ -17,13 +17,12 @@ namespace ExpenseControl_ASP.NET.Controllers
             this.usersService = usersService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(PaginationViewModel paginationViewModel)
         {
             var userId = usersService.GetUserId();
-            var categories = await categoriesRepository.GetCategories(userId);
+            var categories = await categoriesRepository.GetCategories(userId, paginationViewModel);
             return View(categories);
         }
-
 
         [HttpGet]
         public IActionResult Create()
