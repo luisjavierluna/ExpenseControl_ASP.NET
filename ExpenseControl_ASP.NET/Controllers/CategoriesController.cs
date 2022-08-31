@@ -21,7 +21,18 @@ namespace ExpenseControl_ASP.NET.Controllers
         {
             var userId = usersService.GetUserId();
             var categories = await categoriesRepository.GetCategories(userId, paginationViewModel);
-            return View(categories);
+            var totalCategories = await categoriesRepository.Count(userId);
+
+            var respuestaVM = new PaginationAnswer<Category>
+            {
+                Elements = categories,
+                Page = paginationViewModel.Page,
+                RecordsPerPage = paginationViewModel.RecordsPerPage,
+                TotalRecordsQuantity = totalCategories,
+                BaseURL = "/categories"
+            };
+
+            return View(respuestaVM);
         }
 
         [HttpGet]
