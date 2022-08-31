@@ -6,6 +6,7 @@ namespace ExpenseControl_ASP.NET.Services
 {
     public interface ICategoriesRepository
     {
+        Task<int> Count(int userId);
         Task Create(Category category);
         Task Delete(int id);
         Task<Category> GetById(int id, int userId);
@@ -44,6 +45,15 @@ namespace ExpenseControl_ASP.NET.Services
                 ORDER BY Name
                 OFFSET {pagination.RecordsToAvoid} ROWS FETCH NEXT
                     {pagination.RecordsPerPage} ROWS ONLY",
+                new { userId });
+        }
+
+        public async Task<int> Count(int userId)
+        {
+            using var connection = new SqlConnection(connectionString);
+            return await connection.ExecuteScalarAsync<int>(@"
+                SELECT COUNT(*) FROM Categories
+                WHERE UserId = @UserId",
                 new { userId });
         }
 
