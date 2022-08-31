@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Category>
+﻿@model PaginationAnswer<Category>
 
 @{
     ViewData["Title"] = "Categories";
@@ -7,6 +7,12 @@
 <h1>Categories</h1>
 <h5>The category allows us to indicate what we spend our money on, 
     as well as where our income comes from</h5>
+
+@*The following lines are used only for testing *@
+<h2>
+    Categories Quantity: @Model.TotalRecordsQuantity -
+    Pages Quantity: @Model.TotalPageQuantity
+</h2>
 
 <a asp-action="Create" class="btn btn-primary mb-3">Create New</a>
 
@@ -19,7 +25,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach(var category in Model)
+        @foreach(var category in Model.Elements)
         {
             <tr>
                 <td>
