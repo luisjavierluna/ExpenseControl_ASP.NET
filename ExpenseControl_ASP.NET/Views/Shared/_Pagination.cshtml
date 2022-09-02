@@ -2,10 +2,26 @@
 
 @{
     var linkTemplate = string.Concat(Model.BaseURL, "?page={0}&recordsPerPage={1}");
+    var activatePreviousButton = Model.Page > 1;
+    var activateNextButton = Model.Page < Model.TotalPageQuantity;
 }
 
 <nav>
     <ul class="pagination">
+        <li class="page-item @(activatePreviousButton ? null: "disable")">
+            @if (activatePreviousButton)
+            {
+                <a class="page-link"
+               href="@string.Format(linkTemplate, Model.Page - 1, Model.RecordsPerPage)">
+                    Previous
+                </a>
+            }
+            else
+            {
+                <span class="page-link">Previous</span>
+            }
+        </li>
+
         @for (var pageNumber = 1; pageNumber <= Model.TotalPageQuantity; pageNumber++)
         {
             <li class="page-item @(pageNumber == Model.Page ? "active" : null)">
@@ -14,5 +30,20 @@
                 </a>
             </li>
         }
+
+        <li class="page-item @(activateNextButton ? null: "disable")">
+            @if (activateNextButton)
+            {
+                <a class="page-link"
+               href="@string.Format(linkTemplate, Model.Page + 1, Model.RecordsPerPage)">
+                    Next
+                </a>
+            }
+            else
+            {
+                <span class="page-link">Next</span>
+            }
+        </li>
+
     </ul>
 </nav>
