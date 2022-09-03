@@ -10,6 +10,18 @@
 
 <a asp-action="Create" class="btn btn-primary mb-3">Create New</a>
 
+<div class="row">
+    <label>Quantity of records to show:</label>
+    <div class="mb-3 col-auto">
+        <select asp-for="@Model.RecordsPerPage" id="quantityRecordsPerPage" class="form-select">
+            <option>3</option>
+            <option>5</option>
+            <option>10</option>
+            <option>25</option>
+        </select>
+    </div>
+</div>
+
 <partial name="_Pagination" />
 
 <table class="table">
@@ -38,3 +50,12 @@
         }
     </tbody>
 </table>
+
+@section Scripts{
+    <script>
+        $("#quantityRecordsPerPage").change(function () {
+            const recordsPerPage = $(this).val();
+            location.href = `/categories/?page=1&recordsPerPage=${recordsPerPage}`;
+        });
+    </script>
+}
