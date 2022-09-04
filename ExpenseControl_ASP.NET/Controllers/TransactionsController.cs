@@ -453,7 +453,11 @@ namespace ExpenseControl_ASP.NET.Controllers
             OperationType operationType)
         {
             var categories = await categoriesRepository.GetCategories(userId, operationType);
-            return categories.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
+            var result = categories.Select(x => new SelectListItem(x.Name, x.Id.ToString())).ToList();
+
+            var defaultOption = new SelectListItem("-- Select Category --", "0", true);
+            result.Insert(0, defaultOption);
+            return result;
         }
 
         [HttpPost]

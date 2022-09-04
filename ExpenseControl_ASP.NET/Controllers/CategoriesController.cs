@@ -29,7 +29,7 @@ namespace ExpenseControl_ASP.NET.Controllers
                 Page = paginationViewModel.Page,
                 RecordsPerPage = paginationViewModel.RecordsPerPage,
                 TotalRecordsQuantity = totalCategories,
-                BaseURL = "/categories"
+                BaseURL = Url.Action()
             };
 
             return View(respuestaVM);
