@@ -8,7 +8,7 @@ namespace ExpenseControl_ASP.NET.Services
     {
         Task Create(AccountType accountType);
         Task Delete(int id);
-        Task<bool> Exists(string name, int usuarioId);
+        Task<bool> Exists(string name, int usuarioId, int id = 0);
         Task<IEnumerable<AccountType>> GetAccountsTypes(int userId);
         Task<AccountType> GetById(int id, int userId);
         Task Sort(IEnumerable<AccountType> sortedAccountTypes);
@@ -38,14 +38,14 @@ namespace ExpenseControl_ASP.NET.Services
             accountType.Id = id;
         }
 
-        public async Task<bool> Exists(string name, int userId)
+        public async Task<bool> Exists(string name, int userId, int id = 0)
         {
             using var connection = new SqlConnection(connectionString);
             var exists = await connection.QueryFirstOrDefaultAsync<int>(@"
                 SELECT 1
                 FROM AccountsTypes
-                WHERE Name = @Name AND UserId = @UserId",
-                new {name, userId });
+                WHERE Name = @Name AND UserId = @UserId AND Id <> @id",
+                new {name, userId, id });
             return exists == 1;
         }
 

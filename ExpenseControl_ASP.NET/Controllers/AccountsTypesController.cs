@@ -118,11 +118,11 @@ namespace ExpenseControl_ASP.NET.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> CheckAccountTypeAlreadyExists(string name)
+        public async Task<IActionResult> CheckAccountTypeAlreadyExists(string name, int id)
         {
             var userId = usersService.GetUserId();
             var accountTypeAlreadyExists = await accountsTypesRepository
-                .Exists(name, userId);
+                .Exists(name, userId, id);
 
             if (accountTypeAlreadyExists)
             {
